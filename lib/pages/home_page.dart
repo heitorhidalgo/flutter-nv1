@@ -15,6 +15,51 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('App bar')),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text("Heitor"),
+              accountEmail: Text("teste@gmail.com"),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.purple,
+                child: Text("H"),
+              ),
+            ),
+            ListTile(
+              title: Text("item 1"),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                _pageController.jumpToPage(0);
+                Navigator.pop(context);
+                setState(() {
+                  indexBottomNavigationBar = 0;
+                });
+              },
+            ),
+            ListTile(
+              title: Text("item 2"),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                _pageController.jumpToPage(1);
+                setState(() {
+                  indexBottomNavigationBar = 1;
+                });
+              },
+            ),
+            ListTile(
+              title: Text("item 3"),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                _pageController.jumpToPage(2);
+                setState(() {
+                  indexBottomNavigationBar = 2;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
       body: PageView(
         controller: _pageController,
         children: [
@@ -30,8 +75,11 @@ class _HomePageState extends State<HomePage> {
             indexBottomNavigationBar = page;
           });
           _pageController.animateToPage(
-            page, duration: Duration(milliseconds: 300), curve: Curves.ease);
-          },
+            page,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.ease,
+          );
+        },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.add), label: 'item 1'),
           BottomNavigationBarItem(icon: Icon(Icons.add), label: 'item 2'),
