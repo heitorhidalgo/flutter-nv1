@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_nv1/todo_list_page.dart';
+import 'package:flutter_nv1/second_page.dart';
+import 'one_page.dart';
 
 
 main(){
@@ -16,7 +17,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.purple,
       ),
-      home: TodoListPage(),
+      home: OnePage(),
+      initialRoute: '',
+      routes: {
+        '': (_) => OnePage(),
+        '/secondPage': (_) => SecondPage(),
+      },
     );
   }
 }
