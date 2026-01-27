@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_nv1/second_page.dart';
 import 'one_page.dart';
 
 
@@ -18,11 +17,6 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.purple,
       ),
       home: OnePage(),
-      initialRoute: '',
-      routes: {
-        '': (_) => OnePage(),
-        '/secondPage': (_) => SecondPage(),
-      },
     );
   }
 }
