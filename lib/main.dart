@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'views/one_page.dart';
+import 'package:flutter_nv1/pages/splash_page.dart';
+import 'package:flutter_nv1/pages/login_page.dart';
 
-
-main(){
-  runApp(MyApp());
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,10 +13,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
       theme: ThemeData(
-        primaryColor: Colors.purple,
+        primarySwatch: Colors.green, // Cor usada no vídeo
+        useMaterial3: true, // Modernizando para Material 3
       ),
-      home: OnePage(),
+      // Rota inicial
+      initialRoute: '/splash',
+      // Mapa de Rotas
+      routes: {
+        '/splash': (_) => const SplashPage(),
+        '/login': (_) => const LoginPage(),
+      },
     );
   }
 }
