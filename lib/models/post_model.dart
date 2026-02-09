@@ -1,38 +1,29 @@
-class Post {
+class PostModel {
   final int userId;
   final int id;
   final String title;
   final String body;
 
-  Post({
+  PostModel({
     required this.userId,
     required this.id,
     required this.title,
     required this.body,
   });
 
-  // Converte de JSON (Map) para Objeto Post
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'] ?? 0, // Garante 0 se vier nulo
+  // Factory moderno para converter JSON
+  factory PostModel.fromJson(Map<String, dynamic> json) {
+    return PostModel(
+      userId: json['userId'] ?? 0, // Garante um valor default se for nulo
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
       body: json['body'] ?? '',
     );
   }
 
-  // Opcional: Converte de Objeto Post para JSON (útil se for enviar dados depois)
-  Map<String, dynamic> toJson() {
-    return {
-      'userId': userId,
-      'id': id,
-      'title': title,
-      'body': body,
-    };
-  }
-
+  // Método auxiliar para debug (toString)
   @override
   String toString() {
-    return 'Post(id: $id, title: $title)';
+    return 'PostModel(id: $id, title: $title)';
   }
 }

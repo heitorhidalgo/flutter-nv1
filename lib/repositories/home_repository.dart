@@ -1,6 +1,5 @@
-import 'package:flutter_nv1/models/post_model.dart'; // Importe seu model Post
+import '../models/post_model.dart';
 
-// Contrato (Interface)
 abstract class HomeRepository {
-  Future<List<Post>> getList();
+  Future<List<PostModel>> getPosts();
 }
