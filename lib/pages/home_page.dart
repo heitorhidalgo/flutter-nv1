@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../controllers/home_controller.dart';
 import '../models/post_model.dart';
 import '../repositories/home_repository_imp.dart';
+import '../services/prefs_services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,6 +27,21 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              // 1. Limpa os dados do disco
+              await PrefsService.logout();
+
+              // 2. Redireciona para o Login e remove todas as telas anteriores da pilha
+              // (Isso impede que o usuário clique em "Voltar" e retorne para a Home)
+              if (context.mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+              }
+            },
+          )
+        ],
       ),
       // 3. O ValueListenableBuilder ouve as mudanças no 'loading' do controller
       body: ValueListenableBuilder<bool>(

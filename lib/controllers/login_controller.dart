@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../services/prefs_services.dart';
 
 class LoginController {
   // Notifier para controlar o loading (spinner)
   final ValueNotifier<bool> inLoader = ValueNotifier<bool>(false);
 
   // Método para simular o login
-  Future<bool> auth(String login, String password) async {
+  Future<bool> auth(String login, String senha) async {
     inLoader.value = true;
 
     // Simula a demora da API (2 segundos)
@@ -14,8 +15,10 @@ class LoginController {
     inLoader.value = false;
 
     // Validação "Hardcoded"
-    if (login == 'admin' && password == '123') {
-      return true; // Sucesso
+    if (login == 'admin' && senha == '123') {
+      // Login Sucesso: Salva no disco
+      await PrefsService.save(login);
+      return true;
     } else {
       return false; // Falha
     }
