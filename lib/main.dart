@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_nv1/pages/details_page.dart';
-import 'package:flutter_nv1/pages/home_page.dart';
-import 'package:flutter_nv1/pages/splash_page.dart';
-import 'package:flutter_nv1/pages/login_page.dart';
+import 'pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,21 +11,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Movie App',
+      debugShowCheckedModeBanner: false, // Remove a faixa de "Debug"
       theme: ThemeData(
-        primarySwatch: Colors.green, // Cor usada no vídeo
-        useMaterial3: true, // Modernizando para Material 3
+        // Configuração de tema moderno (Material 3)
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      // Rota inicial
-      initialRoute: '/splash',
-      // Mapa de Rotas
-      routes: {
-        '/splash': (_) => const SplashPage(),
-        '/login': (_) => const LoginPage(),
-        '/home': (_) => const HomePage(),
-        '/details': (_) => const DetailsPage(), // Registrando a nova rota
-      },
+      // Define a HomePage como a tela inicial
+      home: const HomePage(),
     );
   }
 }

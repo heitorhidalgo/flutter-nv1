@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../controllers/home_controller.dart';
-import '../models/post_model.dart';
-import '../repositories/home_repository_imp.dart';
-import '../services/prefs_services.dart';
+import '../controllers/movies_controller.dart';
+import '../repositories/movies_repository_imp.dart';
+import '../services/dio_service_imp.dart';
+import '../models/movies_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,13 +12,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // 1. Instanciamos o Controller (passando o repositório para ele)
-  final HomeController _controller = HomeController(HomeRepositoryImp());
+  // Injeção de Dependência Manual (Service -> Repo -> Controller)
+  final MoviesController _controller = MoviesController(
+    MoviesRepositoryImp(
+      DioServiceImp(),
+    ),
+  );
 
   @override
   void initState() {
     super.initState();
-    // 2. Chamamos o método fetch() para buscar os dados assim que a tela abre
     _controller.fetch();
   }
 
@@ -26,68 +29,39 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              // 1. Limpa os dados do disco
-              await PrefsService.logout();
-
-              // 2. Redireciona para o Login e remove todas as telas anteriores da pilha
-              // (Isso impede que o usuário clique em "Voltar" e retorne para a Home)
-              if (context.mounted) {
-                Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
-              }
-            },
-          )
-        ],
+        title: const Text('Movies'),
+        centerTitle: true,
       ),
-      // 3. O ValueListenableBuilder ouve as mudanças no 'loading' do controller
+      // Ouve o loading
       body: ValueListenableBuilder<bool>(
         valueListenable: _controller.loading,
         builder: (context, isLoading, child) {
-
-          // Se estiver carregando, mostra o spinner
           if (isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // 4. Se não estiver carregando, ouve a lista de 'posts'
-          return ValueListenableBuilder<List<PostModel>>(
-            valueListenable: _controller.posts,
-            builder: (context, posts, child) {
-
-              // Se a lista estiver vazia (opcional: exibir mensagem)
-              if (posts.isEmpty) {
-                return const Center(child: Text('Nenhum post encontrado'));
-              }
-
-              // Constrói a lista
+          // Ouve a lista de filmes
+          return ValueListenableBuilder<List<MoviesModel>>(
+            valueListenable: _controller.movies,
+            builder: (context, movies, child) {
               return ListView.separated(
-                itemCount: posts.length,
+                itemCount: movies.length,
                 separatorBuilder: (_, __) => const Divider(),
                 itemBuilder: (context, index) {
-                  final post = posts[index];
-
+                  final movie = movies[index];
                   return ListTile(
-                    leading: CircleAvatar(
-                      // Exibe o ID (convertendo para String)
-                      child: Text(post.id.toString()),
+                    leading: Image.network(
+                      movie.posterPath,
+                      width: 50, // Largura fixa para manter padrão
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Icon(Icons.error),
                     ),
-                    title: Text(
-                      post.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    title: Text(movie.title),
+                    subtitle: Text(
+                      movie.overview,
+                      maxLines: 2, // Limita texto a 2 linhas
+                      overflow: TextOverflow.ellipsis, // Adiciona "..."
                     ),
-                    subtitle: Text(post.body), // Exibe o corpo do post
-                    trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // 5. NAVEGAÇÃO: Passando o objeto 'post' inteiro como argumento
-                      Navigator.of(context).pushNamed(
-                        '/details',
-                        arguments: post,
-                      );
-                    },
                   );
                 },
               );
