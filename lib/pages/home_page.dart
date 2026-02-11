@@ -3,6 +3,7 @@ import '../controllers/movies_controller.dart';
 import '../repositories/movies_repository_imp.dart';
 import '../services/dio_service_imp.dart';
 import '../models/movies_model.dart';
+import '../widgets/movie_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,11 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Injeção de Dependência Manual (Service -> Repo -> Controller)
   final MoviesController _controller = MoviesController(
-    MoviesRepositoryImp(
-      DioServiceImp(),
-    ),
+    MoviesRepositoryImp(DioServiceImp()),
   );
 
   @override
@@ -28,46 +26,56 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Movies'),
-        centerTitle: true,
-      ),
-      // Ouve o loading
-      body: ValueListenableBuilder<bool>(
-        valueListenable: _controller.loading,
-        builder: (context, isLoading, child) {
-          if (isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      // No vídeo ele tira a AppBar e usa um layout customizado com SafeArea
+      body: Padding(
+        padding: const EdgeInsets.all(28.0), // Padding geral
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40), // Espaço para a barra de status (se não usar AppBar)
 
-          // Ouve a lista de filmes
-          return ValueListenableBuilder<List<MoviesModel>>(
-            valueListenable: _controller.movies,
-            builder: (context, movies, child) {
-              return ListView.separated(
-                itemCount: movies.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (context, index) {
-                  final movie = movies[index];
-                  return ListTile(
-                    leading: Image.network(
-                      movie.posterPath,
-                      width: 50, // Largura fixa para manter padrão
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(Icons.error),
-                    ),
-                    title: Text(movie.title),
-                    subtitle: Text(
-                      movie.overview,
-                      maxLines: 2, // Limita texto a 2 linhas
-                      overflow: TextOverflow.ellipsis, // Adiciona "..."
-                    ),
+            // Título "Movies" grande
+            Text(
+              'Movies',
+              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+
+            const SizedBox(height: 20), // Espaço entre título e lista
+
+            // Área da Lista
+            // O ValueListenableBuilder deve envolver APENAS a parte que muda (a lista)
+            Expanded(
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _controller.loading,
+                builder: (context, isLoading, child) {
+                  if (isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  return ValueListenableBuilder<List<MoviesModel>>(
+                    valueListenable: _controller.movies,
+                    builder: (context, movies, child) {
+                      return ListView.separated(
+                        // Remove o padding interno da lista para alinhar com o título
+                        padding: EdgeInsets.zero,
+                        itemCount: movies.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 15), // Espaço entre cards
+                        itemBuilder: (context, index) {
+                          final movie = movies[index];
+                          // Chama nosso widget customizado
+                          return MovieCard(movie: movie);
+                        },
+                      );
+                    },
                   );
                 },
-              );
-            },
-          );
-        },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
