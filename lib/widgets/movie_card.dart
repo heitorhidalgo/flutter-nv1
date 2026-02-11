@@ -9,14 +9,22 @@ class MovieCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200, // Altura fixa definida no vídeo
+      height: 200,
       decoration: BoxDecoration(
-        color: Colors.black12, // Cor de fundo leve
-        borderRadius: BorderRadius.circular(15), // Borda arredondada no card
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15), // Arredonda o container
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          // IMAGEM (Poster)
+          // 1. IMAGEM COM ARREDONDAMENTO APENAS NA ESQUERDA
           ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(15),
@@ -24,51 +32,51 @@ class MovieCard extends StatelessWidget {
             ),
             child: Image.network(
               movie.posterPath,
-              width: 150, // Largura da imagem
-              height: double.infinity, // Ocupa toda a altura do pai (200)
-              fit: BoxFit.cover, // Cobre o espaço sem distorcer
-              // Tratamento de Erro na Imagem
-              errorBuilder: (_, __, ___) => Container(
-                width: 150,
-                color: Colors.grey,
-                child: const Icon(Icons.broken_image, size: 50),
-              ),
-              // Tratamento de Loading (Opcional, mas recomendado)
-              loadingBuilder: (context, child, progress) {
-                if (progress == null) return child;
+              width: 150,
+              height: double.infinity,
+              fit: BoxFit.cover,
+
+              // 2. LOADING BUILDER: Mostra progresso enquanto baixa a imagem
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
                 return const SizedBox(
                   width: 150,
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              },
+
+              // 3. ERROR BUILDER: Se falhar (sem internet), mostra ícone
+              errorBuilder: (context, error, stackTrace) {
+                return const SizedBox(
+                  width: 150,
+                  child: Center(
+                    child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                  ),
                 );
               },
             ),
           ),
 
-          // CONTEÚDO (Texto)
+          // CONTEÚDO DO TEXTO
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título
                   Text(
                     movie.title,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
-                    overflow: TextOverflow.ellipsis, // Adiciona "..." se for grande
+                    overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
-
-                  const Spacer(), // Empurra o conteúdo abaixo para o fim
-
-                  // Avaliação
-                  Text('Avaliação: ${movie.voteAverage}'),
-
+                  const Spacer(),
+                  Text('Popularidade: ${movie.voteAverage}'),
                   const SizedBox(height: 10),
-
-                  // Descrição curta (Overview)
                   Text(
                     movie.overview,
                     style: Theme.of(context).textTheme.bodySmall,

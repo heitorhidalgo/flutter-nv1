@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../controllers/movies_controller.dart';
 import '../repositories/movies_repository_imp.dart';
 import '../services/dio_service_imp.dart';
@@ -26,55 +27,58 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // No vídeo ele tira a AppBar e usa um layout customizado com SafeArea
       body: Padding(
-        padding: const EdgeInsets.all(28.0), // Padding geral
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40), // Espaço para a barra de status (se não usar AppBar)
+        padding: const EdgeInsets.all(28.0),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _controller.loading,
+          builder: (context, isLoading, child) {
 
-            // Título "Movies" grande
-            Text(
-              'Movies',
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
+            // 1. SE ESTIVER CARREGANDO: MOSTRA LOTTIE
+            if (isLoading) {
+              return Center(
+                child: Lottie.asset(
+                  'assets/lottie.json',
+                  width: 200, // Tamanho controlado
+                  height: 200,
+                ),
+              );
+            }
 
-            const SizedBox(height: 20), // Espaço entre título e lista
+            // 2. SE CARREGOU: MOSTRA O CONTEÚDO (Título + Lista)
+            // Usamos SingleChildScrollView + Column ou Expanded para layout
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
+                Text(
+                  'Movies',
+                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 20),
 
-            // Área da Lista
-            // O ValueListenableBuilder deve envolver APENAS a parte que muda (a lista)
-            Expanded(
-              child: ValueListenableBuilder<bool>(
-                valueListenable: _controller.loading,
-                builder: (context, isLoading, child) {
-                  if (isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  return ValueListenableBuilder<List<MoviesModel>>(
+                // Lista de Filmes
+                Expanded(
+                  child: ValueListenableBuilder<List<MoviesModel>>(
                     valueListenable: _controller.movies,
                     builder: (context, movies, child) {
                       return ListView.separated(
-                        // Remove o padding interno da lista para alinhar com o título
-                        padding: EdgeInsets.zero,
+                        padding: EdgeInsets.zero, // Remove padding extra
                         itemCount: movies.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 15), // Espaço entre cards
+                        separatorBuilder: (_, __) => const SizedBox(height: 15),
                         itemBuilder: (context, index) {
                           final movie = movies[index];
-                          // Chama nosso widget customizado
                           return MovieCard(movie: movie);
                         },
                       );
                     },
-                  );
-                },
-              ),
-            ),
-          ],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
