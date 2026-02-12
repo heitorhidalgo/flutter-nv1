@@ -31,7 +31,6 @@ class DetailsPage extends StatelessWidget {
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
               child: Column(
@@ -46,28 +45,48 @@ class DetailsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-
                   // Nota e Data (Row com Icones)
                   Row(
                     children: [
-                      const Icon(Icons.star, color: Colors.amber),
+                      const Icon(Icons.star, size: 34, color: Colors.amber),
                       const SizedBox(width: 5),
                       Text(
                         movie.voteAverage.toStringAsFixed(1), // Ex: 8.5
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          color: Colors.black87,
+                        ),
                       ),
                       const Spacer(),
-                      const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                      const Icon(Icons.date_range_sharp, size: 36, color: Colors.black87),
                       const SizedBox(width: 5),
                       // Exemplo estático, mas poderia vir do model se tivesse o campo data
-                      Text('Lançamento', style: Theme.of(context).textTheme.bodyMedium),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Lançamento',
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            movie.releaseDate,
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-
                   const SizedBox(height: 20),
                   const Divider(),
                   const SizedBox(height: 20),
-
                   // Sinopse (Overview)
                   Text(
                     'Sinopse',

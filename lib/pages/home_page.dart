@@ -29,43 +29,60 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(28.0),
-        child: ValueListenableBuilder<bool>(
-          valueListenable: _controller.loading,
-          builder: (context, isLoading, child) {
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40),
 
-            // 1. SE ESTIVER CARREGANDO: MOSTRA LOTTIE
-            if (isLoading) {
-              return Center(
-                child: Lottie.asset(
-                  'assets/lottie.json',
-                  width: 200, // Tamanho controlado
-                  height: 200,
+            // Título
+            Text(
+              'Movies',
+              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // BARRA DE PESQUISA (NOVIDADE)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: TextField(
+                // Chama o controller a cada letra digitada
+                onChanged: _controller.onChanged,
+                decoration: const InputDecoration(
+                  hintText: 'Pesquisar filmes...',
+                  border: InputBorder.none,
+                  icon: Icon(Icons.search),
                 ),
-              );
-            }
+              ),
+            ),
 
-            // 2. SE CARREGOU: MOSTRA O CONTEÚDO (Título + Lista)
-            // Usamos SingleChildScrollView + Column ou Expanded para layout
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
-                Text(
-                  'Movies',
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-                // Lista de Filmes
-                Expanded(
-                  child: ValueListenableBuilder<List<MoviesModel>>(
+            // Conteúdo (Lottie ou Lista)
+            Expanded(
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _controller.loading,
+                builder: (context, isLoading, child) {
+                  if (isLoading) {
+                    return Center(
+                      child: Lottie.asset(
+                        'assets/lottie.json',
+                        width: 200,
+                      ),
+                    );
+                  }
+
+                  return ValueListenableBuilder<List<MoviesModel>>(
                     valueListenable: _controller.movies,
                     builder: (context, movies, child) {
                       return ListView.separated(
-                        padding: EdgeInsets.zero, // Remove padding extra
+                        padding: EdgeInsets.zero,
                         itemCount: movies.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 15),
                         itemBuilder: (context, index) {
@@ -74,11 +91,11 @@ class _HomePageState extends State<HomePage> {
                         },
                       );
                     },
-                  ),
-                ),
-              ],
-            );
-          },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
