@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'pages/home_page.dart';
+import 'core/inject/inject.dart'; // Importe seu arquivo de injeção
+import 'layers/presentation/ui/pages/movie_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Inject.init();
   runApp(const MyApp());
 }
 
@@ -11,15 +14,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Movie App',
-      debugShowCheckedModeBanner: false, // Remove a faixa de "Debug"
+      debugShowCheckedModeBanner: false,
+      title: 'MOVIE APP',
+      // PADRONIZAÇÃO: Configuração do tema escuro global
       theme: ThemeData(
-        // Configuração de tema moderno (Material 3)
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF000000),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF121212),
+          elevation: 0,
+          centerTitle: true,
+        ),
+        // Padronização da cor de destaque (Accent)
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.red,
+          secondary: Color(0xFFFFC107), // Amarelo Âmbar para ícones de nota
+        ),
       ),
-      // Define a HomePage como a tela inicial
-      home: const HomePage(),
+      home: const MoviePage(),
     );
   }
 }
